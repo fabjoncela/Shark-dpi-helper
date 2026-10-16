@@ -15,9 +15,10 @@ Run on a standard non-admin Windows account with the receiver connected while
 the mouse is off and while it is on. Record which interface and usage entries
 appear. VID/PID and product strings alone do not confirm the model.
 
-CI runs formatting, tests, Clippy, and a release build on Windows. Local Rust
-toolchain was unavailable during initial implementation; remote CI must
-establish build status.
+CI formatting, tests, Clippy, and the Windows x64 release build passed. Rust
+and MinGW-w64 are also installed in the build environment; the local x86_64
+Windows GNU cross-build succeeded. The resulting read-only executable SHA-256
+is `491ff806180a0d115c992eef870eac66826691702165b8ae06ac39d394dd6d42`.
 
 ## Product requirements
 
