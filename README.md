@@ -8,7 +8,12 @@ reports, opens no device handles, and omits serial numbers.
 USB identifiers and product strings are candidate evidence only;
 model_confirmed always remains false. No DPI get/set command exists yet.
 
-The library also contains an offline-only reconstruction of the 60-byte DPI settings block built by the official hub. It sends no HID reports and is not ready for device writes. See [the codec research note](docs/x8se-official-hub-codec.md); its test vector is generated from the web bundle, not a hardware capture.
+The library contains two offline-only research modules:
+
+- [Official hub settings-block encoder](docs/x8se-official-hub-codec.md): reconstructs the 60-byte X8 SE settings block. It does not send reports.
+- `gearhub_25a7`: adapts OpenMouse's 0x25a7 GET_DPI request and response layout. It does not open HID or send reports. This read path has not been confirmed by a successful X8 SE hardware capture, and OpenMouse does not implement an X8 SE DPI setter.
+
+See [the OpenMouse GearHub read-path note](docs/openmouse-gearhub-read.md) for the source mapping and hardware-validation limits.
 
 ## Build on Windows
 
