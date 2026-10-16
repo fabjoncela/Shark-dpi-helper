@@ -40,13 +40,22 @@ impl fmt::Display for DecodeError {
                 write!(f, "expected a {REPORT_LEN}-byte report, got {actual} bytes")
             }
             Self::WrongResponseCommand(command) => {
-                write!(f, "expected GET_DPI response 0x{GET_DPI_COMMAND:02x}, got 0x{command:02x}")
+                write!(
+                    f,
+                    "expected GET_DPI response 0x{GET_DPI_COMMAND:02x}, got 0x{command:02x}"
+                )
             }
             Self::TooManyStages(count) => {
-                write!(f, "response reports {count} DPI stages; maximum is {STAGE_CAPACITY}")
+                write!(
+                    f,
+                    "response reports {count} DPI stages; maximum is {STAGE_CAPACITY}"
+                )
             }
             Self::TruncatedStageTable { expected, actual } => {
-                write!(f, "DPI stage table needs {expected} bytes, response has {actual}")
+                write!(
+                    f,
+                    "DPI stage table needs {expected} bytes, response has {actual}"
+                )
             }
         }
     }
