@@ -2,7 +2,8 @@
 name = "shark-dpi-helper"
 version = "0.1.0"
 edition = "2024"
-description = "Read-only HID inventory probe for Attack Shark X8 SE validation"
+rust-version = "1.87"
+description = "Read-only HID probe and offline X8 SE DPI codec research"
 license = "MIT"
 
 [[bin]]

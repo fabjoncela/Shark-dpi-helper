@@ -1,7 +1,7 @@
 # Attack Shark X8 SE DPI Helper — Project Context
 
 Last reviewed: 2026-10-16
-Status: read-only Rust HID probe merged to `main` (commit `abfd9197d5947688f0199b246d177ffd04dfdf94`); Windows x64 cross-build succeeded. Physical-device validation and DPI write support remain outstanding.
+Status: read-only Rust HID probe merged to `main`; Windows x64 cross-build succeeded. The experimental offline ATTACK SHARK HUB X8 SE DPI block encoder and tests are on branch `work/x8se-official-hub-codec` in PR #4; formatting, tests, Clippy, and the Windows release build pass. Physical-device validation and DPI write support remain outstanding.
 
 ## Current implementation
 
@@ -70,19 +70,29 @@ stage, capture HID traffic, compare with a preceding read, preserve the
 original table, and verify only intended fields changed. Test readback after
 change and across power cycles to establish persistence.
 
+## Official ATTACK SHARK HUB bundle review (static analysis only)
+
+Reviewed the deployed web bundle on 2026-10-16 without executing the application. The main bundle maps X8SE to device ID `0x02`; the X8 SE page calls an X8SE serializer to build a 60-byte settings block and sends a connection-method/device-ID prefix plus that block as hex through its local WebSocket helper. This confirms the browser application constructs and submits a message to its helper; it does not reveal the helper's final HID report or prove device acceptance.
+
+The observed UI defaults are eight slots `800, 1600, 2400, 3200, 8000, 25000, 0, 0`, with stage 2 active. The block includes a profile byte, sensitivity parameters, enabled-stage mask, X/Y high-range flags, eight X and Y slot arrays, active-stage byte, eight indicator colors, indication type, a big-endian 16-bit additive checksum, and eight trailing zero bytes. DPI conversion uses a 220-entry lookup table and range-specific scaling. The source also contains a `n+++d` first-indicator loop expression that creates a byte gap/overwrite; the offline module deliberately reproduces it for comparison.
+
+The static assets inspected were `index-CHmxtNQf.js` (SHA-256 `ae803cd1849f67bd20e0fff87af21aabdb2f918a728fecd4cc7d32ba13cbf5f0`) and `dpiX8SE-Bh7olmqY.js` (SHA-256 `661f26a4a60f5693153761606e1dabb11eeebe36fae9dc5b3a4954baba0fd5b7`). `src/x8se_official_hub.rs` mirrors only the in-memory settings-block serializer. Its golden test vector comes from the deployed JavaScript and is synthetic, not a HID capture. See `docs/x8se-official-hub-codec.md`.
+
+Do not infer the HID report ID, report length, framing, reply, readback, persistence, or supported hardware range from this JavaScript. Do not apply OpenMouse GearHub-V5 `0x54` based on this result. Keep all HID writes disabled until a physical official-hub capture verifies the end-to-end path.
+
 ## TODO while PC unavailable
 
 These research and preparation tasks can move forward without the mouse:
 
-- Inspect the official ATTACK SHARK HUB web bundle for the X8 SE model ID and
-  DPI read/write serializers. Record the exact source/version and label each
-  finding as observed, inferred, or unverified.
+- Completed static review of the official hub bundle and added a pure offline
+  60-byte X8 SE settings-block encoder plus a synthetic JavaScript reference
+  vector on `work/x8se-official-hub-codec`; confirm CI and review the branch.
 - Compare any candidate DPI write format with OpenMouse's X8 SE `0xD4` read
   path. Do not assume GearHub-V5's `0x54` command or 64-byte table applies to
   X8 SE.
-- Once a candidate format is found, add offline parser/encoder tests using
-  captured or clearly marked synthetic fixtures. Keep actual HID writes
-  disabled until device evidence confirms the format.
+- Keep the encoder isolated from HID. The current golden fixture is synthetic;
+  replace or supplement it with a preserved real capture after hardware is
+  available, then compare each byte and the checksum.
 - Prepare the detection test matrix for receiver present/mouse off, mouse on,
   and multiple similar devices; ambiguous matches must fail safely.
 
