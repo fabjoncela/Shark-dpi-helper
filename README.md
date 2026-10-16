@@ -32,3 +32,42 @@ untouched DPI stages, and independently confirm the result. See CONTEXT.md.
     cargo fmt --check
     cargo test
     cargo clippy --all-targets -- -D warnings
+
+## JSON output and exit codes
+
+A matching collection appears in a successful response like this:
+
+    {
+      "ok": true,
+      "read_only": true,
+      "devices": [
+        {
+          "vendor_id": 7511,
+          "product_id": 64096,
+          "interface_number": 2,
+          "usage_page": 65280,
+          "usage": 1,
+          "manufacturer": "Example",
+          "product": "USB Receiver",
+          "candidate_class": "x8_se_reported_id",
+          "model_confirmed": false
+        }
+      ],
+      "error": null
+    }
+
+The example values illustrate the shape only. An empty devices array means no
+candidate IDs were enumerated; it does not mean no mouse is attached.
+
+If HID API setup fails, detect prints JSON and exits with code 1:
+
+    {
+      "ok": false,
+      "read_only": true,
+      "devices": [],
+      "error": "could not initialize Windows HID API: ..."
+    }
+
+Exit codes: 0 means detection ran successfully (including zero matches); 1 means
+HID API initialization failed; 2 is Clap's command-line usage error, printed
+to stderr. Command-line usage errors may not be JSON.

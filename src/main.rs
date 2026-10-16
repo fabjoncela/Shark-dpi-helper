@@ -8,7 +8,11 @@ const X8_SE_PID: u16 = 0xfa60;
 const GEARHUB_VID: u16 = 0x25a7;
 
 #[derive(Parser)]
-#[command(name = "AttackSharkDPI", version, about = "Read-only HID probe for hardware validation")]
+#[command(
+    name = "AttackSharkDPI",
+    version,
+    about = "Read-only HID probe for hardware validation"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Command,
@@ -91,14 +95,21 @@ fn main() {
     let cli = Cli::parse();
     match cli.command {
         Command::Detect => match detect() {
-            Ok(output) => println!("{}", serde_json::to_string_pretty(&output).expect("serialize output")),
+            Ok(output) => println!(
+                "{}",
+                serde_json::to_string_pretty(&output).expect("serialize output")
+            ),
             Err(error) => {
-                println!("{}", serde_json::to_string_pretty(&DetectOutput {
-                    ok: false,
-                    read_only: true,
-                    devices: Vec::new(),
-                    error: Some(format!("{error:#}")),
-                }).expect("serialize output"));
+                println!(
+                    "{}",
+                    serde_json::to_string_pretty(&DetectOutput {
+                        ok: false,
+                        read_only: true,
+                        devices: Vec::new(),
+                        error: Some(format!("{error:#}")),
+                    })
+                    .expect("serialize output")
+                );
                 std::process::exit(1);
             }
         },
@@ -116,7 +127,10 @@ mod tests {
 
     #[test]
     fn gearhub_vendor_is_candidate_without_confirming_model() {
-        assert_eq!(classify(0x25a7, 0x0001), CandidateClass::GearhubVendorCandidate);
+        assert_eq!(
+            classify(0x25a7, 0x0001),
+            CandidateClass::GearhubVendorCandidate
+        );
     }
 
     #[test]

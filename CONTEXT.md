@@ -101,3 +101,37 @@ errors. Bound HID operations and preserve all unrelated DPI stages/settings.
 - OpenMouse GearHub-V5 codec: https://github.com/OpenMouse-Project/mouse-protocol/blob/main/src/gearhub/index.ts
 - Official Attack Shark hub: https://www.attackshark.cn/system.aspx?ClassID=18
 - CafeLauncher: https://github.com/fabjoncela/Cs-script
+
+## CafeLauncher integration review (current main)
+
+Reviewed CafeLauncher main at the time of this note. Its Logitech path is the
+reference pattern for a future X8 SE integration, but X8 SE should use its own
+helper identity, cache and pinned release once validated.
+
+- The launcher currently stores the Logitech helper under
+  %LOCALAPPDATA%\CafeLauncher\logihub, with a pinned release URL and SHA-256.
+  The original X8 plan calls for the new helper under
+  %LOCALAPPDATA%\CafeLauncher\Tools.
+- A separate hidden PowerShell worker downloads to a unique temporary file,
+  has a 30-second request timeout, checks SHA-256, then moves the verified
+  file to the executable cache. Completion is handed back to the GUI using a
+  status file and timer; network work does not block the GUI.
+- Profile requests update one pending DPI value. When downloads overlap with
+  profile clicks, the latest requested DPI is used after the helper is ready.
+  Other profile work proceeds independently.
+- Before use, the cached executable hash is checked again. Helper failures are
+  logged as step outcomes and do not terminate the launcher.
+- Device selection uses machine-readable enumeration, exact supported model
+  IDs, connected state, and explicit device index. It refuses zero or multiple
+  matches instead of choosing the first entry. The selected device identity is
+  rechecked before applying and reading back DPI.
+- DPI is verified by reading it back. G HUB is left running and may override a
+  live value later. Onboard DPI writes are intentionally not used. The
+  Superlight 1 host-mode fallback is model-specific and should not be carried
+  over to the Attack Shark helper without separate evidence.
+
+Future X8 work should reuse the launcher’s async-download, hash-before-cache,
+latest-request, bounded execution, logging, and continue-on-failure behavior.
+Do not reuse Logitech command arguments, cache identity, device model checks,
+or the Superlight-specific fallback. CafeLauncher integration remains deferred
+until the X8 SE collection and DPI protocol pass physical-device validation.
