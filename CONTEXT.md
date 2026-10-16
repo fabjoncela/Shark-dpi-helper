@@ -1,7 +1,7 @@
 # Attack Shark X8 SE DPI Helper — Project Context
 
 Last reviewed: 2026-10-16  
-Status: planning only; no helper repository or implementation exists yet.
+Status: repository created; planning only; no helper implementation exists yet.
 
 ## Purpose
 
@@ -74,7 +74,7 @@ AttackSharkDPI.exe dpi set 800
 
 ## Repository bootstrap and first work
 
-The proposed GitHub repository was not found during this review. After it is created, add this file, then start with Phase 1 rather than implementing a guessed DPI write command. Keep the helper's protocol tests runnable without hardware; add real-device validation as a separate required release gate.
+The GitHub repository `fabjoncela/Shark-dpi-helper` now exists and contains this initial context file. Start with Phase 1 rather than implementing a guessed DPI write command. Keep the helper's protocol tests runnable without hardware; add real-device validation as a separate required release gate.
 
 ## References
 
