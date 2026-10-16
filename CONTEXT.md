@@ -1,7 +1,7 @@
 # Attack Shark X8 SE DPI Helper — Project Context
 
 Last reviewed: 2026-10-16
-Status: read-only Rust HID probe merged to `main`; Windows x64 cross-build succeeded. The experimental offline ATTACK SHARK HUB X8 SE DPI block encoder and tests are on branch `work/x8se-official-hub-codec` pending CI/review. No physical-device validation or DPI write support.
+Status: read-only Rust HID probe merged to `main`; Windows x64 cross-build succeeded. The experimental offline ATTACK SHARK HUB X8 SE DPI block encoder and tests are on branch `work/x8se-official-hub-codec` in PR #4; formatting, tests, Clippy, and the Windows release build pass. Physical-device validation and DPI write support remain outstanding.
 
 ## Current implementation
 
