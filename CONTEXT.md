@@ -1,7 +1,7 @@
 # Attack Shark X8 SE DPI Helper — Project Context
 
 Last reviewed: 2026-10-16
-Status: read-only Rust HID probe merged to `main`; Windows x64 cross-build succeeded. The experimental offline ATTACK SHARK HUB X8 SE DPI block encoder and tests are on branch `work/x8se-official-hub-codec` in PR #4; formatting, tests, Clippy, and the Windows release build pass. Physical-device validation and DPI write support remain outstanding.
+Status: read-only Rust HID probe and offline ATTACK SHARK HUB X8 SE DPI block encoder are merged to `main`. An offline OpenMouse-derived GearHub GET_DPI codec is on branch `work/openmouse-x8se-gearhub-read` in PR #5; it has no HID transport or setter. Physical-device validation and DPI write support remain outstanding.
 
 ## Current implementation
 
@@ -63,6 +63,20 @@ A separate GearHub-V5 implementation documents GET_DPI (0xD4) and SET_DPI
 VID 0x1d57 and follows a separate driver path. Treat 0x54 and the layout as a
 protocol lead only; do not send it to the X8 SE until confirmed from an X8 SE
 vendor-driver capture.
+
+## X11 DPI setter as a hardware-test hypothesis
+
+OpenMouse's X11 path builds DPI writes using feature report 0x04. It is a
+possible implementation to compare against the X8 SE, but the current driver
+routes the X8 SE through the separate 0x25a7 GearHub path and does not call the
+X11 setter for it. Treat shared acceptance as unverified.
+
+When hardware is available, capture an official-hub DPI change on the X8 SE
+and compare it with the X11 report structure: report ID, report length,
+interface/collection, changed fields, and checksum. If the captures establish
+that the X8 SE accepts the same report, adapt the stage-preserving write logic
+as a separate, explicitly tested path. Do not send report 0x04 to the X8 SE
+solely because the code has a method named setDpi.
 
 The official Attack Shark download page lists X8SE among models supported by
 its browser-based ATTACK SHARK HUB. Use it on physical hardware, change one
