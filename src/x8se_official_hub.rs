@@ -301,4 +301,3 @@ mod tests {
             .fold(0u16, |sum, byte| sum.wrapping_add(u16::from(*byte)))
     }
 }
-
