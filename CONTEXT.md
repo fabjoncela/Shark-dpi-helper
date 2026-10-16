@@ -70,6 +70,37 @@ stage, capture HID traffic, compare with a preceding read, preserve the
 original table, and verify only intended fields changed. Test readback after
 change and across power cycles to establish persistence.
 
+## TODO while PC unavailable
+
+These research and preparation tasks can move forward without the mouse:
+
+- Inspect the official ATTACK SHARK HUB web bundle for the X8 SE model ID and
+  DPI read/write serializers. Record the exact source/version and label each
+  finding as observed, inferred, or unverified.
+- Compare any candidate DPI write format with OpenMouse's X8 SE `0xD4` read
+  path. Do not assume GearHub-V5's `0x54` command or 64-byte table applies to
+  X8 SE.
+- Once a candidate format is found, add offline parser/encoder tests using
+  captured or clearly marked synthetic fixtures. Keep actual HID writes
+  disabled until device evidence confirms the format.
+- Prepare the detection test matrix for receiver present/mouse off, mouse on,
+  and multiple similar devices; ambiguous matches must fail safely.
+
+Hardware and Windows checks to run when the X8 SE and PC are available:
+
+- Capture the official hub changing one DPI stage. Save the preceding read,
+  outgoing reports, replies, and checksums; compare the before/after data and
+  identify which fields changed.
+- Confirm the configuration interface and report access on a standard,
+  non-admin Windows account. Record enumeration with the receiver connected
+  while the mouse is off and while it is on.
+- Verify the new DPI by reading it back where possible and checking actual
+  pointer behavior. Test supported DPI limits/steps and persistence after
+  disconnecting or power-cycling the mouse.
+- Only after these checks should the helper gain a DPI setter; initially write
+  one stage while preserving all other settings, and report unverified writes
+  honestly if readback is unavailable.
+
 ## Phase 1 hardware investigation
 
 Before implementing any HID read/write command:
