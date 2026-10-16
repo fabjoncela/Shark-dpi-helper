@@ -27,6 +27,12 @@ The upstream driver also records model IDs inside receiver messages, including `
 
 The upstream UI's listed DPI values are candidate presets, not confirmed X8 SE write limits. Verify accepted DPI values and how the mouse responds to unsupported values on hardware.
 
+### New protocol lead (not yet verified on X8 SE)
+
+OpenMouse's separate GearHub-V5 implementation documents `GET_DPI` (`0xD4`) and `SET_DPI` (`0x54`) as read/write operations for the whole 64-byte DPI-stage table. Its writer reads the table, changes the requested stage, and preserves other DPI stages and indicator colors. However, that implementation explicitly targets VID `0x3151`; the X8 SE capture is VID `0x1d57`. Treat `0x54` and the V5 table layout as a strong lead to test, not a confirmed X8 SE command or payload.
+
+The official Attack Shark download page lists X8SE among the models supported by its browser-based ATTACK SHARK HUB. The fastest validation is to use that official tool on the physical X8 SE, change one DPI stage, capture the HID feature reports, and compare the write with a preceding `0xD4` read. Preserve the original 64-byte block and verify that only the intended DPI fields changed. Then read back and test after powering the mouse off and on to establish persistence.
+
 ## Phase 1 must answer before implementation
 
 1. **Can Windows user-mode HID APIs reach the X8 SE configuration interface?** Confirm the exact interface/collection and report length on a standard, non-admin account. Do not assume browser WebHID access implies Windows native access, or vice versa.
@@ -81,4 +87,6 @@ The GitHub repository `fabjoncela/Shark-dpi-helper` now exists and contains this
 - [OpenMouse X8 SE support investigation](https://github.com/OpenMouse-Project/openmouse/blob/main/session.md)
 - [OpenMouse Attack Shark HID driver](https://github.com/OpenMouse-Project/mouse-protocol/blob/main/src/drivers/attackshark/hid.ts)
 - [OpenMouse mouse-protocol repository](https://github.com/OpenMouse-Project/mouse-protocol)
+- [OpenMouse GearHub-V5 codec](https://github.com/OpenMouse-Project/mouse-protocol/blob/main/src/gearhub/index.ts)
+- [Official Attack Shark driver and web hub page](https://www.attackshark.cn/system.aspx?ClassID=18)
 - [CafeLauncher repository](https://github.com/fabjoncela/Cs-script)
