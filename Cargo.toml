@@ -1,0 +1,17 @@
+[package]
+name = "shark-dpi-helper"
+version = "0.1.0"
+edition = "2024"
+description = "Read-only HID inventory probe for Attack Shark X8 SE validation"
+license = "MIT"
+
+[[bin]]
+name = "AttackSharkDPI"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+hidapi = { version = "2.6", default-features = false, features = ["windows-native"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
