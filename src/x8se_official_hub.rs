@@ -172,8 +172,8 @@ pub fn encode_settings_block(
 }
 
 fn validate_ui_dpi(stage: usize, dpi: u16) -> Result<(), EncodeError> {
-    let valid = (50..=10_000).contains(&dpi) && dpi % 50 == 0
-        || (10_100..=25_000).contains(&dpi) && dpi % 100 == 0;
+    let valid = (50..=10_000).contains(&dpi) && dpi.is_multiple_of(50)
+        || (10_100..=25_000).contains(&dpi) && dpi.is_multiple_of(100);
     if valid {
         Ok(())
     } else {
@@ -264,7 +264,6 @@ mod tests {
             encode_settings_block(&settings),
             Err(EncodeError::DpiOutsideObservedUiRange { .. })
         ));
-        let mut settings = settings;
         settings.stages[0] = None;
         settings.active_stage = 0;
         assert!(matches!(
