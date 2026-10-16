@@ -1,7 +1,7 @@
 # Attack Shark X8 SE DPI Helper — Project Context
 
 Last reviewed: 2026-10-16
-Status: read-only HID probe implemented on work/x8se-readonly-hid-probe; physical-device validation and all DPI control remain outstanding.
+Status: read-only Rust HID probe merged to `main` (commit `abfd9197d5947688f0199b246d177ffd04dfdf94`); Windows x64 cross-build succeeded. Physical-device validation and DPI write support remain outstanding.
 
 ## Current implementation
 
@@ -15,9 +15,10 @@ Run on a standard non-admin Windows account with the receiver connected while
 the mouse is off and while it is on. Record which interface and usage entries
 appear. VID/PID and product strings alone do not confirm the model.
 
-CI runs formatting, tests, Clippy, and a release build on Windows. Local Rust
-toolchain was unavailable during initial implementation; remote CI must
-establish build status.
+CI formatting, tests, Clippy, and the Windows x64 release build passed. Rust
+and MinGW-w64 are also installed in the build environment; the local x86_64
+Windows GNU cross-build succeeded. The resulting read-only executable SHA-256
+is `491ff806180a0d115c992eef870eac66826691702165b8ae06ac39d394dd6d42`.
 
 ## Product requirements
 
@@ -47,13 +48,21 @@ routed the device incorrectly and describes a vendor-control collection and
 GearHub (25a7) protocol. It lists feature report 0x00 with 64-byte commands,
 0x80 for firmware, and 0xD4 for DPI slots.
 
-The current OpenMouse Attack Shark driver has a GearHub DPI read path, but its
-setDpi() path only supports its separate 1d57-x11 family. This does not prove
-X8 SE DPI writes work.
+The current OpenMouse Attack Shark driver routes an X8 SE with the vendor-control
+collection to its `25a7` family. That path reads DPI slots with feature report
+`0x00` / command `0xD4` and exposes generic DPI options. However, the current
+`setDpi()` implementation calls `requireX11Dpi()` and writes through the
+separate X11 report `0x04` path; it does not provide a GearHub DPI setter for
+the X8 SE. OpenMouse's supported-device listing marks X8 SE as needing its
+Bridge companion, which supplies native HID access, but Bridge availability is
+not itself proof that writes are implemented. Its X8 SE investigation also
+reports no successful feature-report exchanges in the analyzed capture.
 
 A separate GearHub-V5 implementation documents GET_DPI (0xD4) and SET_DPI
-(0x54) over a 64-byte DPI-stage table, but targets VID 0x3151. Treat 0x54 and
-the layout as unverified for X8 SE.
+(0x54) over a 64-byte DPI-stage table, but targets VID 0x3151. The X8 SE is
+VID 0x1d57 and follows a separate driver path. Treat 0x54 and the layout as a
+protocol lead only; do not send it to the X8 SE until confirmed from an X8 SE
+vendor-driver capture.
 
 The official Attack Shark download page lists X8SE among models supported by
 its browser-based ATTACK SHARK HUB. Use it on physical hardware, change one
